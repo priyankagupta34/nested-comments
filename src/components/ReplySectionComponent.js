@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentComponent from "./CommentComponent";
 
 function ReplySectionComponent({ parentId, prevComments }) {
-  const [comments, setComments] = useState([...prevComments]);
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    setComments(prevComments);
+  }, [prevComments]);
   const [add, setAdd] = useState(false);
   const [addReply, setAddReply] = useState();
   const [showReply, setShowReply] = useState(true);
@@ -44,15 +47,27 @@ function ReplySectionComponent({ parentId, prevComments }) {
               </button>
             ) : (
               <>
-                {showReply
-                  ? comment.replies.map((reply) => (
+                {showReply ? (
+                  <>
+                    <button
+                      type="button"
+                      className="red"
+                      onClick={() => {
+                        comment.replies = [];
+                        setComments([...comments]);
+                      }}
+                    >
+                      Delete replies
+                    </button>
+                    {comment.replies.map((reply) => (
                       <ReplySectionComponent
                         parentId={comment.id}
                         key={reply.id}
                         prevComments={[...comment.replies]}
                       />
-                    ))
-                  : null}
+                    ))}
+                  </>
+                ) : null}
               </>
             )}
 
